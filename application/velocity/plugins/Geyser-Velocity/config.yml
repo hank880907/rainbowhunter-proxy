@@ -35,11 +35,11 @@ java:
 motd:
   # The MOTD that will be broadcasted to Minecraft: Bedrock Edition clients. This is irrelevant if "passthrough-motd" is set to true.
   # If either of these are empty, the respective string will default to "Geyser"
-  primary-motd: Geyser
-  secondary-motd: Another Geyser server.
+  primary-motd: Rainbowhunter
+  secondary-motd: log in, chill out, forget your deadlines.
 
   # Whether Geyser should relay the MOTD from the Java server to Bedrock players.
-  passthrough-motd: true
+  passthrough-motd: false
 
   # Maximum amount of players that can connect.
   # This is only visual, and is only applied if passthrough-motd is disabled.
@@ -59,7 +59,7 @@ motd:
 # Gameplay options that affect Bedrock players
 gameplay:
   # The server name that will be sent to Minecraft: Bedrock Edition clients. This is visible in both the pause menu and the settings menu.
-  server-name: Geyser
+  server-name: Rainbowhunter
 
   # Allow a fake cooldown indicator to be sent. Bedrock players otherwise do not see a cooldown as they still use 1.8 combat.
   # Please note: if the cooldown is enabled, some users may see a black box during the cooldown sequence, like below:
@@ -125,7 +125,7 @@ gameplay:
   custom-skull-render-distance: 32
 
 # The default locale if we don't have the one the client requested. If set to "system", the system's language will be used.
-default-locale: system
+default-locale: en_US
 
 # Whether player IP addresses will be logged by the server.
 log-player-ip-addresses: true

@@ -5,15 +5,40 @@ packages:
   - wireguard-tools
 
 write_files:
+  - path: /app/docker-compose.yml
+    permissions: '0644'
+    content: |
+      version: '3.8'
+      services:
+        velocity:
+          image: hank880907/rainbowhunter-proxy:latest
+          container_name: velocity-proxy
+          restart: unless-stopped
+          ports:
+            - "25565:25565"
+            - "19132:19132/udp"
+          volumes:
+            - /etc/forwarding.secret:/etc/forwarding.secret:ro
+          stdin_open: true
+          tty: true
+
   - path: /opt/start_stack.sh
     permissions: '0755'
     content: |
       #!/bin/bash
       set -e
       
+      # Install Docker
       curl -fsSL https://get.docker.com | sh
+      
+      # Install Docker Compose
+      curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+      chmod +x /usr/local/bin/docker-compose
+      
+      # Install Netbird
       curl -fsSL https://pkgs.netbird.io/install.sh | sh
 
+      # Start Netbird
       netbird service stop || true
       netbird service start
       
@@ -24,6 +49,15 @@ write_files:
         fi
         sleep 3
       done
+
+      # Fetch forwarding secret from Secret Manager
+      gcloud secrets versions access latest --secret="${secret_id}" --project="${project_id}" > /etc/forwarding.secret
+      chmod 600 /etc/forwarding.secret
+
+      # Pull latest image and start containers
+      cd /app
+      docker-compose pull
+      docker-compose up -d
 
 runcmd:
   - /opt/start_stack.sh

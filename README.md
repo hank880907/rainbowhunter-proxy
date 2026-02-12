@@ -12,6 +12,15 @@ This project provides a containerized Minecraft proxy server using Velocity. It 
 - Make (for running build commands)
 - `forwarding.secret` file in the project root (for server forwarding authentication)
 
+## Gcloud permissions
+
+User need to enable these gcloud permissions.
+
+```bash
+gcloud services enable compute.googleapis.com --project=rainbowhunter-proxy
+gcloud services enable secretmanager.googleapis.com --project=rainbowhunter-proxy
+```
+
 ## Quick Start
 
 ### Build the Image

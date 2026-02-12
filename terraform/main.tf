@@ -20,6 +20,34 @@ data "google_compute_zones" "available" {
   region = var.region
 }
 
+# --- SECRET MANAGEMENT ---
+
+resource "google_secret_manager_secret" "forwarding_secret" {
+  secret_id = "velocity-forwarding-secret"
+
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_version" "forwarding_secret_version" {
+  secret      = google_secret_manager_secret.forwarding_secret.id
+  secret_data = var.forwarding_secret
+}
+
+# Service account for the VM
+resource "google_service_account" "proxy_sa" {
+  account_id   = "proxy-sa-${var.region}"
+  display_name = "Velocity Proxy Service Account"
+}
+
+# Grant secret access to the service account
+resource "google_secret_manager_secret_iam_member" "proxy_secret_access" {
+  secret_id = google_secret_manager_secret.forwarding_secret.id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${google_service_account.proxy_sa.email}"
+}
+
 # --- NETWORKING ---
 
 resource "google_compute_address" "static_ip" {
@@ -38,6 +66,12 @@ resource "google_compute_firewall" "proxy_firewall" {
     ports    = ["25565"]
   }
 
+  # GeyserMC (Bedrock Edition)
+  allow {
+    protocol = "udp"
+    ports    = ["19132"]
+  }
+
   # Netbird P2P Handshake (Direct WireGuard)
   allow {
     protocol = "udp"
@@ -52,7 +86,7 @@ resource "google_compute_firewall" "proxy_firewall" {
 
 resource "google_compute_instance" "proxy" {
   name         = "velocity-proxy-${var.region}"
-  machine_type = "e2-micro"
+  machine_type = var.machine_type
   zone = data.google_compute_zones.available.names[0]
 
   boot_disk {
@@ -69,13 +103,18 @@ resource "google_compute_instance" "proxy" {
     }
   }
 
+  service_account {
+    email  = google_service_account.proxy_sa.email
+    scopes = ["cloud-platform"]
+  }
+
   tags = ["minecraft-proxy"]
 
   metadata = {
     user-data = templatefile("${path.module}/cloud-init.yaml", {
       netbird_setup_key = var.netbird_setup_key
-    #   velocity_image    = var.velocity_image
-
+      project_id        = var.project_id
+      secret_id         = google_secret_manager_secret.forwarding_secret.secret_id
     })
   }
 
