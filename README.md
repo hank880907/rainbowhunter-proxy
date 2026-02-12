@@ -21,6 +21,23 @@ gcloud services enable compute.googleapis.com --project=rainbowhunter-proxy
 gcloud services enable secretmanager.googleapis.com --project=rainbowhunter-proxy
 ```
 
+# Deployment
+
+Example: deploy extra plugins to australia GCP instance
+
+```bash
+terraform apply -var="region=australia-southeast1" -var="machine_type=e2-standard-4" -var="proxy_tag=latest-additional"
+```
+
+## Taiwan 
+
+```bash
+terraform apply -var="region=asia-east1" -var="machine_type=e2-standard-4" -var="proxy_tag=latest-additional"
+
+# budget version
+terraform apply -var="region=asia-east1" -var="machine_type=e2-micro" -var="proxy_tag=latest"
+```
+
 ## Quick Start
 
 ### Build the Image
