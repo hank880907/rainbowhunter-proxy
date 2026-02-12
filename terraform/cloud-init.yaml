@@ -11,7 +11,7 @@ write_files:
       version: '3.8'
       services:
         velocity:
-          image: hank880907/rainbowhunter-proxy:latest
+          image: hank880907/rainbowhunter-proxy:${proxy_tag}
           container_name: velocity-proxy
           restart: unless-stopped
           ports:

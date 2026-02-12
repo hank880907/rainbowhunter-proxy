@@ -26,3 +26,9 @@ variable "machine_type" {
   default = "e2-micro"
   description = "GCP machine type for the proxy instance"
 }
+
+variable "proxy_tag" {
+  type    = string
+  default = "latest"
+  description = "tag for the Velocity proxy"
+}

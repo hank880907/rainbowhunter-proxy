@@ -115,6 +115,7 @@ resource "google_compute_instance" "proxy" {
       netbird_setup_key = var.netbird_setup_key
       project_id        = var.project_id
       secret_id         = google_secret_manager_secret.forwarding_secret.secret_id
+      proxy_tag      = var.proxy_tag
     })
   }
 
