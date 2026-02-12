@@ -12,6 +12,7 @@ write_files:
       services:
         velocity:
           image: hank880907/rainbowhunter-proxy:${proxy_tag}
+          pull_policy: always
           container_name: velocity-proxy
           restart: unless-stopped
           ports:
