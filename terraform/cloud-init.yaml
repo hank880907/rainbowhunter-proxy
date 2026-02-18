@@ -22,6 +22,8 @@ write_files:
             - /etc/forwarding.secret:/etc/forwarding.secret:ro
           stdin_open: true
           tty: true
+          environment:
+            JVM_OPTS: "-Xms1100M -Xmx1100M -XX:+UseSerialGC -XX:MaxInlineLevel=15 -Dfile.encoding=UTF-8"
 
   - path: /opt/start_stack.sh
     permissions: '0755'
