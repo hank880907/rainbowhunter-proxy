@@ -1,4 +1,4 @@
-.PHONY: base extra run deploy
+.PHONY: base extra run deploy-image
 
 IMAGE_NAME = rainbowhunter-proxy
 IMAGE_TAG = 0.0.2

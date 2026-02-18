@@ -15,6 +15,7 @@ variable "forwarding_secret" {
 
 variable "region" {
   type    = string
+  default = "asia-east1"
 }
 
 variable "machine_type" {

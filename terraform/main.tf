@@ -51,7 +51,7 @@ resource "google_secret_manager_secret_iam_member" "proxy_secret_access" {
 # --- NETWORKING ---
 
 resource "google_compute_address" "static_ip" {
-  name   = "velocity-proxy-ip-${var.region}"
+  name   = "rainbowhunter-${var.region}"
   region = var.region
   network_tier = "PREMIUM"
 }
