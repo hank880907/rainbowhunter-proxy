@@ -13,17 +13,13 @@ variable "forwarding_secret" {
     description = "Velocity forwarding secret for server authentication"
 }
 
-# variable "velocity_image" { 
-#     type = string 
-# }
-
 variable "region" {
   type    = string
 }
 
 variable "machine_type" {
   type    = string
-  default = "e2-micro"
+  default = "e2-small"
   description = "GCP machine type for the proxy instance"
 }
 

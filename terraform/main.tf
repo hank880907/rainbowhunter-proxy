@@ -37,8 +37,8 @@ resource "google_secret_manager_secret_version" "forwarding_secret_version" {
 
 # Service account for the VM
 resource "google_service_account" "proxy_sa" {
-  account_id   = "proxy-sa-${var.region}"
-  display_name = "Velocity Proxy Service Account"
+  account_id   = "rainbowhunter-proxy-sa"
+  display_name = "Rainbowhunter Proxy Service Account"
 }
 
 # Grant secret access to the service account
@@ -57,7 +57,7 @@ resource "google_compute_address" "static_ip" {
 }
 
 resource "google_compute_firewall" "proxy_firewall" {
-  name    = "velocity-p2p-firewall-${var.region}"
+  name    = "velocity-p2p-firewall"
   network = "default"
 
   # Minecraft Traffic
@@ -109,6 +109,13 @@ resource "google_compute_instance" "proxy" {
   }
 
   tags = ["minecraft-proxy"]
+
+  scheduling {
+    automatic_restart   = false
+    on_host_maintenance = "TERMINATE"
+    preemptible         = true
+    provisioning_model  = "SPOT"
+  }
 
   metadata = {
     user-data = templatefile("${path.module}/cloud-init.yaml", {
