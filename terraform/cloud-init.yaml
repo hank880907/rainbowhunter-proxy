@@ -23,7 +23,7 @@ write_files:
           stdin_open: true
           tty: true
           environment:
-            JVM_OPTS: "-Xms1100M -Xmx1100M -XX:+UseSerialGC -XX:MaxInlineLevel=15 -Dfile.encoding=UTF-8"
+            JVM_OPTS: "-Xms1024M -Xmx1024M -XX:+UseSerialGC -XX:MaxInlineLevel=15 -Dfile.encoding=UTF-8"
 
   - path: /opt/start_stack.sh
     permissions: '0755'
