@@ -1,0 +1,168 @@
+# Thanks for using Connection Guard, the free connection security plugin with premium quality.
+# There is a lot to configure, if you want to. If not, you don't have to!
+# If you leave it as default, Connection Guard will use ProxyCheck (https://proxycheck.io/)
+# to check for vpn or proxy usage and block connections from those. For geo data, Connection Guard
+# will use the IP-API (https://ip-api.com/) service.
+
+# Message config used for all messages send to the player.
+# You can add your own languages by creating a file called <language>.yml and setting the
+# entry below to the file name without the .yml extension.
+message-language: 'en'
+
+# Settings about how to behave when finding a vpn or geo-blocked user.
+behavior:
+  vpn:
+    # If set to true, players connected to a vpn cannot join the server.
+    kick-player: false
+    # If set to true, players with the permission connectionguard.notify.vpn will receive a notification message
+    # when a player connected to a vpn tries to connect.
+    notify-staff: true
+    # If set to true, the specified command will be executed by the console when a user connected to a vpn tries to connect.
+    # Available placeholders: %NAME%, %IP%
+    execute-command:
+      enabled: false
+      command: 'ban-ip %IP%'
+    # If set to true, a discord webhook message is sent.
+    send-webhook:
+      enabled: false
+      url: ''
+
+    # If you want some players or ip addresses to be exempted from the vpn check,
+    # you can add them here.
+    exemptions:
+      - '127.0.0.1'
+    # If enabled, players with the permission connectionguard.exemption.vpn will not be flagged as vpn players.
+    # Only available when having LuckPerms installed.
+    use-permission-exemption: false
+  geo:
+    # If set to true, geo-blocked players cannot join the server.
+    kick-player: true
+    # If set to true, players with the permission connectionguard.notify.geo will receive a notification message
+    # when a geo-blocked player tries to connect.
+    notify-staff: true
+    # If set to true, the specified command will be executed by the console when a geo-blocked user tries to connect.
+    # Available placeholders: %NAME%, %IP%
+    execute-command:
+      enabled: false
+      command: 'ban-ip %IP%'
+    # If set to true, a discord webhook message is sent.
+    send-webhook:
+      enabled: false
+      url: ''
+
+    # Define how restrictive you want to be with geo-blocking.
+    # Available options:
+    # - BLACKLIST (action specified by 'flag' below will be executed, if the country is on the list)
+    # - WHITELIST (action specified by 'flag' below will be executed, if the country is not on the list)
+    type: 'WHITELIST'
+
+    # Countries are specified by their Alpha 2 code.
+    # A full list can be found here: https://www.iban.com/country-codes
+    list:
+      - TW
+    # If you want some players or ip addresses to be exempted from the geo check,
+    # you can add them here.
+    exemptions:
+      - '127.0.0.1'
+    # If enabled, players with the permission connectionguard.exemption.geo will not be flagged as geo-blocked players.
+    # Only available when having LuckPerms.
+    use-permission-exemption: false
+
+# You can use multiple services at the same time (just enable multiple at once) to minimize
+# the possibility of a false-flag (high value) or catch very niche vpn services (low value). This number determines, how many of the enabled services have
+# to report that an ip is a proxy/vpn, before the plugin will treat it as a proxy/vpn.
+# Default value: 1
+required-positive-flags: 1
+
+# There are a lot of different services which help the plugin identify which
+# IP is a vpn and which is not. Some work better than others and some have daily/monthly limits.
+
+provider:
+  vpn:
+    # ProxyCheck is the most reliable service when it comes to detecting vpns and proxies.
+    # Without an api key, it is limited to 100 requests daily (should work fine for 30-40 unique players
+    # per day). With a free api key, which can be received after registration on https://proxycheck.io/,
+    # 1.000 requests per day are free (should work fine for 300 unique players per day). Upgrades
+    # are not very expensive, especially if you have a server with more than 300 unique players per day.
+    proxycheck:
+      enabled: true
+      api-key: ''
+    # IP-API is completely free, but has a rate limit of 45 requests per minute.
+    ip-api:
+      enabled: false
+    # IPHub requires an api key, which can be aquired for free (1.000 free daily queries) on https://iphub.info/
+    iphub:
+      enabled: false
+      api-key: ''
+    # VPNAPI requires an api key, which can be aquired for free (1.000 free daily queries) on https://vpnapi.io/
+    vpnapi:
+      enabled: false
+      api-key: ''
+
+    # For advanced usage, there is the option to add other vpn detection provider.
+    # You can find settings for different other provider in the Connection Guard wiki!
+    # https://github.com/gerolndnr/connection-guard/wiki/Custom-Services
+    # Services, that have been implemented as 'custom service':
+    # - VPN-API.xyz (https://vpn-api.xyz)
+    custom:
+      enabled: false
+
+      # Request options
+      # Available options: GET, POST
+      request-type: 'GET'
+      # Available placeholders: %IP%
+      request-url: 'https://my-provider.com/%IP%?key=123456789'
+      # Available placeholders: %IP%
+      request-header:
+        - "X-Key:123456789"
+      # Available options: 'application/json'
+      # Only used when request-type is set to 'POST'!
+      request-body-type: 'application/json'
+      # Available placeholders: %IP%
+      request-body: '{ "ip": "%IP%" }'
+
+      # Response options
+      # Available options: application/json
+      response-type: 'application/json'
+      response-format:
+        is-vpn-field:
+          # Nested data can be accessed with '#', e.g. { "data": { "isVpn": true }} with 'data#isVpn'
+          field-name: "data#isVpn"
+          # Available options: BOOLEAN, STRING
+          field-type: 'BOOLEAN'
+          # Only necessary when field-type is set to STRING
+          string-options:
+            # If you set 'field-type' to STRING, the IP is treated as a vpn, when the field contains the following string.
+            is-vpn-string: "yes"
+        vpn-provider-field:
+          # Nested data can be accessed with '#', e.g. { "data": { "vpnProvider": "NordVPN" }} with 'data#vpnProvider'
+          # Leave empty if this detection provider does not give information about the vpn provider.
+          field-name: "data#vpnProvider"
+  geo:
+    # Available services:
+    # - IP-API (Free, no api key required, 45 requests per minute)
+    # - ProxyCheck (Free, api key is free and optional and can be configured above in the vpn section,
+    #               100 requests per day without api key or 1.000 requests per day with api key)
+    service: 'IP-API'
+  cache:
+    # The cache is very important to effectively use the requests you have and avoid running into the request limit.
+    # Once a request to a service is made, its data is stored for the specified duration (see below) and used instead of
+    # making a new request. This data does not change very frequently and you can cache the results for days, if you want to.
+    # If you want to clear the cache, you can do that by typing in the command /connectionguard clearcache, which is especially
+    # necessary when you add or remove countries to the geo-block-list.
+    # Available types:
+    # - SQLite (no further configuration is necessary, stored in a file in the plugins directory)
+    # - Redis (configure connection details below, useful when deploying Connection Guard on multiple servers)
+    # - Disabled (disable any caching, make absolutely sure that you don't run into request limits!)
+    type: 'SQLite'
+
+    # Time after which a new request is made to the services and the existing data is refreshed (when the player connects).
+    # Unit: minutes
+    expiration:
+      vpn: 1440
+      geo: 4320
+
+    redis:
+      hostname: 'localhost'
+      port: 6379
+      password: ''
