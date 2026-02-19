@@ -1,29 +1,27 @@
 .PHONY: base extra run deploy-image
 
 IMAGE_NAME = rainbowhunter-proxy
-IMAGE_TAG = 0.0.4
+IMAGE_TAG = 0.0.5
 
 # Build base image (Velocity + ViaVersion)
 velocity:
 	docker build -t $(IMAGE_NAME):velocity application/velocity/
+	docker tag $(IMAGE_NAME):velocity $(IMAGE_NAME):latest
 
-# Build extra image (extends base with additional plugins)
-proxy: velocity
-	docker build -t $(IMAGE_NAME):$(IMAGE_TAG) application/proxy/
-
-proxy-additional: proxy
-	docker build -t $(IMAGE_NAME):$(IMAGE_TAG)-additional application/proxy-additional/
+additional: velocity
+	docker build -t $(IMAGE_NAME):$(IMAGE_TAG)-additional application/additional/
+	docker tag $(IMAGE_NAME):$(IMAGE_TAG)-additional $(IMAGE_NAME):latest-additional
 
 # Run the extra image (default)
-run-additional: proxy-additional
-	docker run -it --rm -p 25565:25565 -v $(PWD)/forwarding.secret:/etc/forwarding.secret $(IMAGE_NAME):$(IMAGE_TAG)-additional
+run-additional: additional
+	docker run -it --rm -p 25565:25565 -v $(PWD)/forwarding.secret:/etc/forwarding.secret $(IMAGE_NAME):latest-additional
 
 # Run base image
-run: proxy
-	docker run -it --rm -p 25565:25565 -v $(PWD)/forwarding.secret:/etc/forwarding.secret $(IMAGE_NAME):$(IMAGE_TAG)
+run: velocity
+	docker run -it --rm -p 25565:25565 -v $(PWD)/forwarding.secret:/etc/forwarding.secret $(IMAGE_NAME):latest
 
 # Deploy extra image to Docker Hub
-deploy-image: extra
+deploy-image: additional
 	docker tag $(IMAGE_NAME):$(IMAGE_TAG) $(DOCKER_USERNAME)/$(IMAGE_NAME):$(IMAGE_TAG)
 	docker push $(DOCKER_USERNAME)/$(IMAGE_NAME):$(IMAGE_TAG)
 	docker tag $(IMAGE_NAME):$(IMAGE_TAG) $(DOCKER_USERNAME)/$(IMAGE_NAME):latest

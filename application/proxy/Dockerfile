@@ -1,1 +1,0 @@
-FROM rainbowhunter-proxy:velocity
