@@ -1,12 +1,12 @@
 .PHONY: base extra run deploy-image
 
 IMAGE_NAME = rainbowhunter-proxy
-IMAGE_TAG = 0.0.5
+IMAGE_TAG = 0.0.6
 
 # Build base image (Velocity + ViaVersion)
 velocity:
-	docker build -t $(IMAGE_NAME):velocity application/velocity/
-	docker tag $(IMAGE_NAME):velocity $(IMAGE_NAME):latest
+	docker build -t $(IMAGE_NAME):$(IMAGE_TAG) application/velocity/
+	docker tag $(IMAGE_NAME):$(IMAGE_TAG) $(IMAGE_NAME):latest
 
 additional: velocity
 	docker build -t $(IMAGE_NAME):$(IMAGE_TAG)-additional application/additional/

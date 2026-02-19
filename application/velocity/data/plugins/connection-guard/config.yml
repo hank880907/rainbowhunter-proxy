@@ -33,7 +33,7 @@ behavior:
       - '127.0.0.1'
     # If enabled, players with the permission connectionguard.exemption.vpn will not be flagged as vpn players.
     # Only available when having LuckPerms installed.
-    use-permission-exemption: false
+    use-permission-exemption: true
   geo:
     # If set to true, geo-blocked players cannot join the server.
     kick-player: true
@@ -66,7 +66,7 @@ behavior:
       - '127.0.0.1'
     # If enabled, players with the permission connectionguard.exemption.geo will not be flagged as geo-blocked players.
     # Only available when having LuckPerms.
-    use-permission-exemption: false
+    use-permission-exemption: true
 
 # You can use multiple services at the same time (just enable multiple at once) to minimize
 # the possibility of a false-flag (high value) or catch very niche vpn services (low value). This number determines, how many of the enabled services have
