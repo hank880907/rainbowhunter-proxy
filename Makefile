@@ -1,7 +1,7 @@
 .PHONY: base extra run deploy-image
 
 IMAGE_NAME = rainbowhunter-proxy
-IMAGE_TAG = 0.0.7
+IMAGE_TAG = 0.0.8
 
 # Build base image (Velocity + ViaVersion)
 velocity:
