@@ -1,12 +1,16 @@
-.PHONY: base extra run deploy-image
+.PHONY: base extra run deploy-image update-geyser
 
 IMAGE_NAME = rainbowhunter-proxy
-IMAGE_TAG = 0.0.9
+IMAGE_TAG = 0.0.10
 
 # Build base image (Velocity + ViaVersion)
 velocity:
 	docker build -t $(IMAGE_NAME):$(IMAGE_TAG) application/velocity/
 	docker tag $(IMAGE_NAME):$(IMAGE_TAG) $(IMAGE_NAME):latest
+
+update-geyser:
+	wget https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/velocity -O application/additional/plugins/Geyser-Velocity.jar
+	wget https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/velocity -O application/additional/plugins/floodgate-velocity.jar
 
 additional: velocity
 	docker build -t $(IMAGE_NAME):$(IMAGE_TAG)-additional application/additional/
