@@ -1,7 +1,7 @@
 .PHONY: base extra run deploy-image update-geyser
 
 IMAGE_NAME = rainbowhunter-proxy
-IMAGE_TAG = 0.0.11
+IMAGE_TAG = 0.0.12
 
 # Build base image (Velocity + ViaVersion)
 velocity:
