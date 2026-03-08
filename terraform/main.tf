@@ -84,9 +84,52 @@ resource "google_compute_firewall" "proxy_firewall" {
 
 # --- THE VIRTUAL MACHINE ---
 
-resource "google_compute_instance" "proxy" {
-  name         = "velocity-proxy-${var.region}"
-  machine_type = var.machine_type
+# resource "google_compute_instance" "proxy" {
+#   name         = "velocity-proxy-${var.region}"
+#   machine_type = var.machine_type
+#   zone = data.google_compute_zones.available.names[0]
+
+#   boot_disk {
+#     initialize_params {
+#       image = "ubuntu-os-cloud/ubuntu-2204-lts"
+#     }
+#   }
+
+#   network_interface {
+#     network = "default"
+#     access_config {
+#       nat_ip = google_compute_address.static_ip.address
+#       network_tier = "PREMIUM"
+#     }
+#   }
+
+#   service_account {
+#     email  = google_service_account.proxy_sa.email
+#     scopes = ["cloud-platform"]
+#   }
+
+#   tags = ["minecraft-proxy"]
+
+#   scheduling {
+#     automatic_restart   = true
+#     on_host_maintenance = "MIGRATE"
+#     preemptible         = false
+#     provisioning_model  = "STANDARD"
+#   }
+
+#   metadata = {
+#     user-data = templatefile("${path.module}/cloud-init.yaml", {
+#       netbird_setup_key = var.netbird_setup_key
+#       project_id        = var.project_id
+#       secret_id         = google_secret_manager_secret.forwarding_secret.secret_id
+#       proxy_tag      = var.proxy_tag
+#     })
+#   }
+# }
+
+resource "google_compute_instance" "proxy-micro" {
+  name         = "velocity-proxy-micro"
+  machine_type = "e2-micro"
   zone = data.google_compute_zones.available.names[0]
 
   boot_disk {
@@ -118,20 +161,12 @@ resource "google_compute_instance" "proxy" {
   }
 
   metadata = {
-    user-data = templatefile("${path.module}/cloud-init.yaml", {
+    user-data = templatefile("${path.module}/micro/cloud-init.yaml", {
       netbird_setup_key = var.netbird_setup_key
       project_id        = var.project_id
       secret_id         = google_secret_manager_secret.forwarding_secret.secret_id
-      proxy_tag      = var.proxy_tag
+      proxy_tag      = "latest"
     })
-  }
-
-  # --- DYNAMIC VALIDATION BLOCK ---
-  lifecycle {
-    precondition {
-      condition     = contains(data.google_compute_regions.available.names, var.region)
-      error_message = "Region '${var.region}' is not valid for this project. Check 'gcloud compute regions list'."
-    }
   }
 }
 
