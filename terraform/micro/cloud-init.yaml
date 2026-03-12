@@ -31,19 +31,6 @@ write_files:
       #!/bin/bash
       set -e
 
-      # remove snapd to save memory.
-      echo "Purging snapd to free memory..."
-      systemctl stop snapd.service snapd.socket snapd.seeded.service || true
-      umount /var/lib/snapd/snaps/* 2>/dev/null || true
-      apt-get autoremove --purge snapd -y
-      rm -rf ~/snap /var/snap /var/lib/snapd /var/cache/snapd
-      
-      # remove multipath-tools to save memory.
-      echo "Purging multipath-tools to free memory..."
-      systemctl stop multipathd.service multipathd.socket || true
-      systemctl disable multipathd.service multipathd.socket || true
-      apt-get purge multipath-tools -y
-
       # Set up 1GB SWAP
       echo "Configuring 1GB Swap file to prevent OOM kills..."
       fallocate -l 1G /swapfile
@@ -82,6 +69,19 @@ write_files:
       cd /app
       docker-compose pull
       docker-compose up -d
+
+      # remove snapd to save memory.
+      echo "Purging snapd to free memory..."
+      systemctl stop snapd.service snapd.socket snapd.seeded.service || true
+      umount /var/lib/snapd/snaps/* 2>/dev/null || true
+      apt-get autoremove --purge snapd -y
+      rm -rf ~/snap /var/snap /var/lib/snapd /var/cache/snapd
+      
+      # remove multipath-tools to save memory.
+      echo "Purging multipath-tools to free memory..."
+      systemctl stop multipathd.service multipathd.socket || true
+      systemctl disable multipathd.service multipathd.socket || true
+      apt-get purge multipath-tools -y
 
 runcmd:
   - /opt/start_stack.sh
