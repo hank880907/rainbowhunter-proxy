@@ -70,18 +70,23 @@ write_files:
       docker-compose pull
       docker-compose up -d
 
-      # remove snapd to save memory.
+      # remove stuff to save memory.
       echo "Purging snapd to free memory..."
       systemctl stop snapd.service snapd.socket snapd.seeded.service || true
       umount /var/lib/snapd/snaps/* 2>/dev/null || true
       apt-get autoremove --purge snapd -y
       rm -rf ~/snap /var/snap /var/lib/snapd /var/cache/snapd
       
-      # remove multipath-tools to save memory.
       echo "Purging multipath-tools to free memory..."
       systemctl stop multipathd.service multipathd.socket || true
       systemctl disable multipathd.service multipathd.socket || true
       apt-get purge multipath-tools -y
+
+      systemctl stop packagekit rsyslog || true
+      apt-get autoremove --purge packagekit rsyslog -y
+
+      systemctl stop networkd-dispatcher || true
+      systemctl disable networkd-dispatcher || true
 
 runcmd:
   - /opt/start_stack.sh
