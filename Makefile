@@ -1,7 +1,7 @@
 .PHONY: base extra run deploy-image update-geyser
 
 IMAGE_NAME = rainbowhunter-proxy
-IMAGE_TAG = 0.0.13
+IMAGE_TAG = 0.0.14
 
 # Build base image (Velocity + ViaVersion)
 velocity:
@@ -22,7 +22,7 @@ run-additional: additional
 
 # Run base image
 run: velocity
-	docker run -it --rm -p 25565:25565 -v $(PWD)/forwarding.secret:/etc/forwarding.secret $(IMAGE_NAME):latest
+	docker run -it --rm -p 25565:25565 -p 9985:9985 -v $(PWD)/forwarding.secret:/etc/forwarding.secret $(IMAGE_NAME):latest
 
 # Deploy extra image to Docker Hub
 deploy-image: additional

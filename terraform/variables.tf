@@ -26,6 +26,6 @@ variable "machine_type" {
 
 variable "proxy_tag" {
   type    = string
-  default = "latest-additional"
+  default = "latest"
   description = "tag for the Velocity proxy"
 }
